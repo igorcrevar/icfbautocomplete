@@ -1,0 +1,57 @@
+div.fbautocomplete-main-div {
+	width:304px; padding:3px 3px 0;
+	margin:0 auto;
+	border:1px solid #aaa; background-color:#fff; cursor:text;
+}
+ul.ui-autocomplete{
+	list-style:none;
+}
+ul.ui-autocomplete li{
+	list-style:none;
+}
+div.fbautocomplete-main-div input[type="text"] {
+	width:auto; 
+	margin:0 0 2px 0; 
+	padding:0 0 3px;
+	position:relative; 
+	top:0; 
+	float:left; 
+	border:none;
+	border-color: transparent; /* ie7 fix */
+	display:block;
+}
+
+div.fbautocomplete-main-div span {
+	display:block; 
+	margin:0 3px 3px 0; 
+	padding:3px 20px 4px 8px;
+	position:relative; 
+	float:left; 
+	background-color:#eee;
+	border:1px solid #333; 
+	-moz-border-radius:7px;
+	-webkit-border-radius:7px; border-radius:7px;
+	color:#333;
+	font:normal 11px Verdana, Sans-serif;
+	width:auto;
+	text-align:left;
+}
+div.fbautocomplete-main-div span a {
+	position:absolute; 
+	right:8px;
+	/*
+	display:block;
+	float:right;
+	margin-left:8px; 
+	width:10px;
+	*/
+	top:2px; 
+	color:#666;
+	font:bold 12px Verdana, Sans-serif; text-decoration:none;
+}
+div.fbautocomplete-main-div span a:hover { color:#ff0000; }
+
+.ui-menu .ui-menu-item{
+	white-space:nowrap; padding:0 10px 0 0;
+	font-size:14px;
+}
