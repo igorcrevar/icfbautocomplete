@@ -1,0 +1,62 @@
+First, you must include jquery, jquery-ui javascripts (note: jquery-ui javascript must  include autocompleter) and fbautocomplete js.You can do this with code simular to :
+
+<script type="text/javascript" src="jquery-1.4.3.min.js"></script>
+<script type="text/javascript" src="jquery-ui/js/jquery-ui-1.8.6.custom.min.js"></script>
+<script type="text/javascript" src="fbautocomplete/fbautocomplete.js"></script>
+You also need to include css of jquery-ui and fb-autocomplete
+
+<link href="jquery-ui/css/ui-lightness/jquery-ui-1.8.6.custom.css" rel="stylesheet" type="text/css" />
+<link href="fbautocomplete/fbautocomplete.css" rel="stylesheet" type="text/css" />
+Somewhere inside html body you need to have something like:(note div is mandatory, after plugin initialization it will get two classes class=”fbautocomplete-main-div ui-helper-clearfix” which you can use to customize look with css)
+
+<div><input id="fbautocomplete_id" type="text" /></div>
+Call to fbautocompleter:
+
+$('#fbautocomplete_id').fbautocomplete({});
+Finally you must implement your server response. By default this code is inside friends.php which will look something like(this was changed in new version, previously ajax call was POST not GET) :
+
+$term = isset($_GET['term']) ? $_GET['term'] : '';
+ 
+//TODO: you should retrieve this list from database
+//list of users
+$allUsers = array(
+	array('id' => 20, 'title' => 'Dan Wellman'),
+...
+);
+ 
+$omUsers = array();
+foreach ($allUsers as $user)
+{
+	if ( stripos($user['title'], $term ) !== false )
+	{
+		$omUsers[] = $user;
+	}
+}
+ 
+//generate output
+$rv = '';
+foreach ($omUsers as $omUser)
+{
+	if ($rv != '') $rv .= ', ';
+	$rv .= '{ title: "'.htmlspecialchars($omUser['title'], ENT_QUOTES, 'UTF-8').'"'.
+				   			', id: '.$omUser['id'].' } ';
+ 
+}
+echo "[$rv]";
+And that is it  .
+
+Here is the list of all fbautocomplete options:
+* minLength – default is 1. Min length of characters to invoke ajax call
+* url – default is friends.php – url which will be called for retrieving list of users – url for your server response.
+* title – default is ‘Remove %s’. This is just title for link for removing already selected users. Handy if you have, for example, application in Serbian or other not English language.
+* useCache – default is true. Should plugin use caching? This is handy for optimization because same inputs doesnt require more than one xmlHttpRequest(ajax) call
+* formName – default is send_message[user]. This will be the name of hidden inputs fields when you submit the form which includes autompleter.
+* sendTitles: default is true. This means that you wont just send (after main form submiting) user ids, but also their titles(usernames,emails, etc) after main form submit.
+* onChangeFunc: function($obj){} – handler you can override if you want to do something after someone picks user from the list. $obj is main object of fbautomplete plugin(or invisible generated input[type=text] if you like)
+* onRemoveFunc: function($obj){ } – handler which will be called after removing user from list of selected.
+* onAlreadySelected: function($obj){} – handler which will be called if you try to add user which is already in list of selected.
+* maxUsers: – default 0(which means unlimited). Use this if you want to limit number of users.
+* onMaxSelectedFunc: function($obj){} – handler which will be called if you try add more then maxUsers users.
+* selected: [] – if you want to pass already selected users. For example: you did form submiting for sending message but you forgot to add subject. The array is array of objects in format [ {id: id1, title: 'title1'}, {id: id2, title: 'title2'}, ... ]
+* cache: {} – add already cached inputs.
+* generateUrl: function(url) – function can be used to generate dynamic retrieve url. Must return string
