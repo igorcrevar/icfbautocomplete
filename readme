@@ -20,7 +20,7 @@ $term = isset($_GET['term']) ? $_GET['term'] : '';
 //TODO: you should retrieve this list from database
 //list of users
 $allUsers = array(
-	array('id' => 20, 'title' => 'Dan Wellman'),
+	array('id' => 20, 'title' => 'John Smith'),
 ...
 );
  
