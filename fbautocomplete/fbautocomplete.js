@@ -38,6 +38,10 @@
 	  		  ,generateUrl: function(url) {
 	  			  return url;
 	  		  }
+			  ,focusWhenClickOnParent: true
+			  ,staticRetrieve: false //must have one argument function(term)
+			  ,highlight: false
+			  
 	  };			
 	  options = $.extend( true, defaultOptions, options);
 	  this.each(function(i){			 	  
@@ -53,6 +57,7 @@
 	  $parent.addClass('fbautocomplete-main-div').addClass('ui-helper-clearfix');
 	  var selected = [];
 	  var lastXhr;
+	  var lastTerm;
 	  
 	  for (var i in options.selected){
 		  //be sure to use this only if sendTitles is true
@@ -62,29 +67,45 @@
 	  $obj.blur(function(){
 		 $obj.val('');		 
 	  });
+	  
+	  //helper for setting response
+	  function setResponse(response, data){
+			response( $.map( data, function( item ) { 
+				return {
+					value: item.title
+					,label: item.title
+					,id: item.id
+					,src: typeof(item.src) == 'undefined' ? false: item.src
+				};
+			}));	
+	  }
 	  $obj.autocomplete({
-		    minLength: options.minLength,
+			minLength: options.minLength,
 			//
 			source: function(request, response){
 				var term = request.term;
+				lastTerm = term; //this should be only one variable
+				if ( options.staticRetrieve)
+				{
+					//call to static method
+					data = options.staticRetrieve(term);
+					setResponse( response, data );
+					return;
+				}
+				
 				if ( options.useCache )
 				{
 					if ( term in options.cache ) {
-						response( $.map( options.cache[ term ], function( item ) {
-							return {
-								value: item.title,
-								label: item.title,
-								id: item.id
-							};
-						}));
+						setResponse( response, options.cache[ term ] );
 						return;
 					}
 				}
-				//pass request to server				
+				//generateUrl method can be used to add some add hoc parameters to url
 				var url = options.generateUrl(options.url);
 				url += url.indexOf('?') == -1 ? '?' : '&';
 				url += 'no_cache_value_FBA='+new Date().getTime();
 
+				//pass request to server				
 				lastXhr = $.get( url, request, function(data,status, xhr){
 					data = eval('('+data+')' );
 					if ( options.useCache )
@@ -94,14 +115,7 @@
 					
 					if ( lastXhr == xhr )
 					{
-						//parse returned values
-						response( $.map( data, function( item ) {
-							return {
-								value: item.title,
-								label: item.title,
-								id: item.id
-							};
-						}));
+						setResponse( response, data );
 					}
 				});
 			},
@@ -120,7 +134,27 @@
 				$obj.val("");
 				options.onChangeFunc($obj);
 			}
-	});
+	})
+	.data( "autocomplete" )._renderItem = function( ul, item ) {
+		var el = $( "<li></li>" ).data( "item.autocomplete", item );
+		
+		var img = '';
+		if ( item.src )
+		{
+			img = '<img src="'+item.src+'" alt="" />';
+		}
+		var title = item.label;
+		if ( options.highlight )
+		{
+			var term = lastTerm + "";
+			//must escape first http://xregexp.com/xregexp.js
+			term.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+			var re = new RegExp("(" + term + ")", "gi") ;
+			title = item.label.replace(re, "<strong>$1</strong>");
+		}
+		el.append( "<a>" + img + title + "</a>" ).appendTo( ul );	
+		return el;		
+	};
 	  
 	//add live handler for clicks on remove links
 	$(".remove-fbautocomplete", $parent.get(0) ).live("click", function(){
@@ -142,8 +176,9 @@
 	
 	//if user clicks on parent div input is selected  
 	$parent.click(function(){  
-
-	    $obj.focus();  
+		if (options.focusWhenClickOnParent){
+			$obj.focus();  
+		}
 	}); 
 	
 	function addNewSelected(fId, fTitle)
