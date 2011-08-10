@@ -1,6 +1,6 @@
 /**
  * fbautocomplete jQuery plugin
- * version 1.0 
+ * version 1.1 
  *
  * Copyright (c) 2010 Igor Crevar <crewce@hotmail.com>
  *

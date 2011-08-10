@@ -60,3 +60,10 @@ Here is the list of all fbautocomplete options:
 * selected: [] – if you want to pass already selected users. For example: you did form submiting for sending message but you forgot to add subject. The array is array of objects in format [ {id: id1, title: 'title1'}, {id: id2, title: 'title2'}, ... ]
 * cache: {} – add already cached inputs.
 * generateUrl: function(url) – function can be used to generate dynamic retrieve url. Must return string
+* focusWhenClickOnParent: true - if you dont want to autofocus input when click on div parent set this to false
+* staticRetrieve: false - if you dont want ajax call just define this function(term) and return array or {id, title[,src]}
+* highlight: false - set this to true if you want to see highlighted parts of users titles which matches inputed term
+
+
+TODO:
+in new version it is possible to have images in list box but not in selected users. 
