@@ -14,23 +14,13 @@ $allUsers = array(
 	array('id' => 80, 'title' => 'Mark Zuckerberg')
 );
 
-$omUsers = array();
+$users = array();
 foreach ($allUsers as $user)
 {
-	if ( stripos($user['title'], $term ) !== false )
-	{
-		$omUsers[] = $user;
+	if (stripos($user['title'], $term ) !== false) {
+		$users[] = $user;
 	}
 }
 
-
 //generate output
-			$rv = '';
-			foreach ($omUsers as $omUser)
-			{
-				if ($rv != '') $rv .= ', ';
-				$rv .= '{ title: "'.htmlspecialchars($omUser['title'], ENT_QUOTES, 'UTF-8').'"'.
-				   			', id: '.$omUser['id'].' } ';
-			
-			}
-			echo "[$rv]";
+echo json_encode($users);
